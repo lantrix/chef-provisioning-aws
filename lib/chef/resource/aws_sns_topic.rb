@@ -1,5 +1,4 @@
 require 'chef/resource/aws_resource'
-require 'chef/provisioning/aws_driver'
 
 class Chef::Resource::AwsSnsTopic < Chef::Resource::AwsResource
   self.resource_name = 'aws_sns_topic'
@@ -8,13 +7,14 @@ class Chef::Resource::AwsSnsTopic < Chef::Resource::AwsResource
   default_action :create
 
   attribute :name, :kind_of => String, :name_attribute => true
-  attribute :topic_name, :kind_of => String
 
-  def initialize(*args)
-    super
+  def self.get_aws_object_by_id(managed_entries, driver, id, scope)
+    begin
+      driver.sns.topics.named(name)
+    rescue
+      nil
+    end
   end
 
-  def after_created
-    super
-  end
+  register_as_aws_resource
 end

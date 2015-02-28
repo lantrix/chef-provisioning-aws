@@ -1,5 +1,4 @@
 require 'chef/resource/aws_resource'
-require 'chef/provisioning/aws_driver'
 
 class Chef::Resource::AwsSqsQueue < Chef::Resource::AwsResource
   self.resource_name = 'aws_sqs_queue'
@@ -7,15 +6,16 @@ class Chef::Resource::AwsSqsQueue < Chef::Resource::AwsResource
   actions :create, :delete, :nothing
   default_action :create
 
-  attribute :name, :kind_of => String, :name_attribute => true
-  attribute :queue_name, :kind_of => String
-  stored_attribute :created_at
+  attribute :name,    kind_of: String, name_attribute: true
+  attribute :options, kind_of: Hash
 
-  def initialize(*args)
-    super
+  def self.get_aws_object_by_id(managed_entries, driver, id, scope)
+    begin
+      driver.sqs.queues.named(name)
+    rescue
+      nil
+    end
   end
 
-  def after_created
-    super
-  end
+  register_as_aws_resource
 end

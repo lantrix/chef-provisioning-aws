@@ -89,7 +89,7 @@ module AWSDriver
         action_handler.perform_action updates do
           actual_elb = elb.load_balancers.create(lb_spec.name, lb_optionals)
 
-          lb_spec.location = {
+          lb_spec.reference = {
             'driver_url' => driver_url,
             'driver_version' => Chef::Provisioning::AWSDriver::VERSION,
             'allocated_at' => Time.now.utc.to_s,
@@ -219,7 +219,7 @@ module AWSDriver
           image_options[:description] ||= "Image #{image_spec.name} created from machine #{machine_spec.name}"
           Chef::Log.debug "AWS Image options: #{image_options.inspect}"
           image = ec2.images.create(image_options.to_hash)
-          image_spec.location = {
+          image_spec.reference = {
             'driver_url' => driver_url,
             'driver_version' => Chef::Provisioning::AWSDriver::VERSION,
             'image_id' => image.id,
@@ -303,7 +303,7 @@ EOD
           sleep 5 while instance.status == :pending
           # TODO add other tags identifying user / node url (same as fog)
           instance.tags['Name'] = machine_spec.name
-          machine_spec.location = {
+          machine_spec.reference = {
               'driver_url' => driver_url,
               'driver_version' => Chef::Provisioning::AWSDriver::VERSION,
               'allocated_at' => Time.now.utc.to_s,
@@ -365,7 +365,7 @@ EOD
         # TODO do we need to wait_until(action_handler, machine_spec, instance) { instance.status != :shutting_down } ?
         action_handler.perform_action "Terminate #{machine_spec.name} (#{machine_spec.location['instance_id']}) in #{aws_config.region} ..." do
           instance.terminate
-          machine_spec.location = nil
+          machine_spec.reference = nil
         end
       else
         Chef::Log.warn "Instance #{machine_spec.location['instance_id']} doesn't exist for #{machine_spec.name}"
@@ -817,7 +817,7 @@ EOD
             # Assign each one to a machine spec
             machine_spec = machine_specs.pop
             machine_options = specs_and_options[machine_spec]
-            machine_spec.location = {
+            machine_spec.reference = {
               'driver_url' => driver_url,
               'driver_version' => Chef::Provisioning::AWSDriver::VERSION,
               'allocated_at' => Time.now.utc.to_s,

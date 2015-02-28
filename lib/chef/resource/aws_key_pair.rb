@@ -1,5 +1,4 @@
 require 'chef/provisioning'
-require 'chef/resource/aws_resource'
 
 class Chef::Resource::AwsKeyPair < Chef::Resource::AwsResource
   self.resource_name = 'aws_key_pair'
@@ -17,8 +16,9 @@ class Chef::Resource::AwsKeyPair < Chef::Resource::AwsResource
   # TODO what is the right default for this?
   attribute :allow_overwrite, :kind_of => [TrueClass, FalseClass], :default => false
 
-  # Proc that runs after the resource completes.  Called with (resource, private_key, public_key)
-  def after(&block)
-    block ? @after = block : @after
+  def self.get_aws_object_by_id(managed_entries, driver, id, scope)
+    driver.ec2.key_pairs[id]
   end
+
+  register_as_aws_resource
 end
