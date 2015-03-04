@@ -1,7 +1,9 @@
 require 'chef/resource/aws_resource'
 require 'chef/provisioning/aws_driver'
 
-class Chef::Resource::AwsEbsVolume < Chef::Resource::AwsResource
+class Chef::Resource::ProvAwsEbsVolume < Chef::Resource::AwsResource
+  provides :aws_ebs_volume
+  
   self.resource_name = 'aws_ebs_volume'
   self.databag_name = 'ebs_volumes'
 

@@ -2,8 +2,9 @@ require 'chef/provider/aws_provider'
 require 'cheffish'
 require 'date'
 
-class Chef::Provider::AwsEbsVolume < Chef::Provider::AwsProvider
-
+class Chef::Provider::ProvAwsEbsVolume < Chef::Provider::AwsProvider
+  provides :aws_ebs_volume
+  
   action :create do
     if existing_volume == nil
       converge_by "Creating new EBS volume #{fqn} in #{new_driver.aws_config.region}" do
